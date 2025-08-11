@@ -132,7 +132,7 @@ const MondayPage: React.FC = () => {
 
       {activeTab === 'financial' && (
         <div>
-          <h2 className="text-xl font-semibold mb-4">Розрахунок додаткових виплат</h2>
+          <h2 className="text-xl font-semibold mb-4">Розрахунок додаткових виплат за цей місяць</h2>
           {userFinancials.length > 0 ? (
             <FinancialList userFinancials={userFinancials} />
           ) : (
