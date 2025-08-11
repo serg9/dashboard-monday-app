@@ -5,6 +5,7 @@ import { UserWorkload, UserFinancial } from '../types';
 import { Header } from '../components/Header';
 import { WorkloadList } from '../components/workload/WorkloadList';
 import { FinancialList } from '../components/financial/FinancialList';
+import { LoadingSkeleton, StatusBar } from '../components/ui/Loading';
 
 const MondayPage: React.FC = () => {
   const [initialLoading, setInitialLoading] = useState(true);
@@ -83,7 +84,7 @@ const MondayPage: React.FC = () => {
   }, []);
 
   if (initialLoading) {
-    return <div className="p-4">Завантаження даних...</div>;
+    return <LoadingSkeleton />;
   }
 
   if (error) {
@@ -93,6 +94,8 @@ const MondayPage: React.FC = () => {
   return (
     <div className="p-4">
       <Header />
+      {/* Subtle status bar */}
+      <StatusBar backgroundLoading={backgroundLoading} lastUpdateTime={lastUpdateTime} />
       <div className="flex border-b mb-6">
         <button
           onClick={() => setActiveTab('workload')}
