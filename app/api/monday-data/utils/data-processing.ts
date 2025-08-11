@@ -123,6 +123,60 @@ function calculateFinancials(user: UserFinancial): void {
 }
 
 /**
+ * Returns the start (inclusive) and end (exclusive) of the current month in UTC
+ */
+function getCurrentMonthRangeUTC(): { start: Date; end: Date } {
+  const now = new Date();
+  const start = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0));
+  const end = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 1, 0, 0, 0, 0));
+  return { start, end };
+}
+
+/**
+ * Computes overlap in seconds between [aStart, aEnd) and [bStart, bEnd)
+ */
+function overlapSeconds(aStart: Date, aEnd: Date, bStart: Date, bEnd: Date): number {
+  const start = aStart > bStart ? aStart : bStart;
+  const end = aEnd < bEnd ? aEnd : bEnd;
+  const diffMs = end.getTime() - start.getTime();
+  return diffMs > 0 ? Math.floor(diffMs / 1000) : 0;
+}
+
+/**
+ * Calculates total tracked duration in seconds for the current month
+ * Prefer history entries; if missing, fall back to startDate + duration.
+ * If an entry has no ended_at, it is considered running until now.
+ */
+function getMonthlyDurationSeconds(timeTrackingColumn: any): number {
+  const { start: monthStart, end: monthEnd } = getCurrentMonthRangeUTC();
+  const now = new Date();
+
+  const history: Array<{ started_at: string; ended_at?: string }> | undefined = timeTrackingColumn?.history;
+
+  let total = 0;
+  if (Array.isArray(history) && history.length > 0) {
+    for (const h of history) {
+      if (!h?.started_at) continue;
+      const started = new Date(h.started_at);
+      const ended = h.ended_at ? new Date(h.ended_at) : now;
+      total += overlapSeconds(started, ended, monthStart, monthEnd);
+    }
+    return total;
+  }
+
+  // Fallback to startDate + duration when history is unavailable
+  const startDateSeconds: number | undefined = timeTrackingColumn?.startDate;
+  const durationSeconds: number | undefined = timeTrackingColumn?.duration;
+  if (typeof startDateSeconds === 'number' && typeof durationSeconds === 'number' && durationSeconds > 0) {
+    const started = new Date(startDateSeconds * 1000);
+    const ended = new Date(startDateSeconds * 1000 + durationSeconds * 1000);
+    total += overlapSeconds(started, ended, monthStart, monthEnd);
+  }
+
+  return total;
+}
+
+/**
  * Processes Monday.com data to extract user financial information
  */
 export function processUserFinancials(boards: Board[]): UserFinancial[] {
@@ -144,9 +198,9 @@ export function processUserFinancials(boards: Board[]): UserFinancial[] {
           const userName = personColumn?.text?.trim();
           
           if (userName && timeTrackingColumn && rateColumn) {
-            const hoursWorked = timeTrackingColumn.duration 
-              ? timeTrackingColumn.duration / FINANCIAL_CONSTANTS.HOURS_IN_SECOND 
-              : 0;
+            // Only count time that overlaps with the current month
+            const monthlyDurationSeconds = getMonthlyDurationSeconds(timeTrackingColumn);
+            const hoursWorked = monthlyDurationSeconds / FINANCIAL_CONSTANTS.HOURS_IN_SECOND;
             const rate = parseNumericValue(rateColumn.text);
             
             if (hoursWorked > 0 || rate > 0) {
