@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Monday.com Dashboard App
 
-## Getting Started
+A comprehensive dashboard application that integrates with Monday.com to track employee workloads and calculate financial metrics.
 
-First, run the development server:
+## 🚀 Live Demo
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+- **Live Application**: [https://dashboard-monday-app.vercel.app/](https://dashboard-monday-app.vercel.app/)
+- **Demo Video**: [YouTube Demo](https://youtu.be/VQDnJhHvuZg)
+
+## 📋 Features
+
+- **Real-time Data Integration**: Seamless integration with Monday.com API
+- **Employee Workload Tracking**: Monitor work hours and productivity metrics
+- **Financial Calculations**: Automated salary and payment calculations
+- **Live Updates**: Background data refresh every 30 seconds
+- **Responsive Design**: Modern UI with optimal user experience
+
+## 🔧 Technical Implementation
+
+### Monday.com Integration
+- **API**: Utilizes Monday.com GraphQL API v2 (`https://api.monday.com/v2`)
+- **Authentication**: Secure token-based authentication
+- **Data Selection**: Optimized queries for specific data requirements
+
+### Data Processing
+- **Server-Side Processing**: All data calculations and aggregations handled on the backend
+- **API Routes**: Clean separation between frontend and Monday.com API interactions
+- **Error Handling**: Robust error handling with graceful degradation
+
+### Live Updates
+- **Background Refresh**: Automatic data updates every 30 seconds
+- **Non-Blocking Updates**: Background updates don't disrupt user experience
+- **Cache Management**: Proper cache control to ensure data freshness
+
+## 💰 Payment Calculation Formula
+
+The application calculates employee payments based on the following logic:
+
+1. **Standard Work Hours**: Each employee should work 160 hours per month (standard norm)
+2. **Base Salary Calculation**: `Employee Rate × 160 hours = Base Monthly Salary`
+3. **Actual Work Calculation**: `Hours Worked × Employee Rate = Amount Earned`
+4. **Overpayment/Underpayment**: `Base Salary - Amount Earned = Company Overpayment`
+
+This formula helps track whether the company is overpaying or underpaying employees based on their actual work hours versus the standard 160-hour month.
+
+## 🛠️ Technology Stack
+
+- **Frontend**: Next.js, React, TypeScript
+- **Backend**: Next.js API Routes
+- **Integration**: Monday.com GraphQL API
+- **Deployment**: Vercel
+
+## 📖 Getting Started
+
+1. Clone the repository
+2. Install dependencies: `npm install`
+3. Set up environment variables (Monday.com API token)
+4. Run development server: `npm run dev`
+5. Open [http://localhost:3000](http://localhost:3000) in your browser
+
+## 🔐 Environment Variables
+
+Create a `.env.local` file in the root directory:
+
+```env
+NEXT_PUBLIC_MONDAY_API_TOKEN=your_monday_api_token_here
+MONDAY_API_TOKEN=your_monday_api_token_here
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+For boards ids need setup in constants file BOARD_IDS array in file:
+`app/api/monday-data/constants.ts`
