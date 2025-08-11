@@ -63,7 +63,6 @@ This formula helps track whether the company is overpaying or underpaying employ
 Create a `.env.local` file in the root directory:
 
 ```env
-NEXT_PUBLIC_MONDAY_API_TOKEN=your_monday_api_token_here
 MONDAY_API_TOKEN=your_monday_api_token_here
 ```
 

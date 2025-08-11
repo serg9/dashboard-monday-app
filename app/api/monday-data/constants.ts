@@ -1,5 +1,4 @@
 export const MONDAY_API_URL = 'https://api.monday.com/v2' as const;
-export const API_VERSION = '2025-08' as const;
 export const BOARD_IDS = [9458295478, 9458292426] as const; // Board IDs
 export const ITEMS_LIMIT = 100 as const; // Items limit
 

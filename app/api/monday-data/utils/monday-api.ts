@@ -1,5 +1,5 @@
 import { MondayApiResponse } from '../types';
-import { MONDAY_API_URL, API_VERSION, BOARD_IDS, ITEMS_LIMIT, COLUMN_IDS } from '../constants';
+import { MONDAY_API_URL, BOARD_IDS, ITEMS_LIMIT, COLUMN_IDS } from '../constants';
 
 export function buildMondayQuery(): string {
   return `
@@ -48,8 +48,7 @@ export async function fetchMondayData(): Promise<MondayApiResponse> {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': process.env.MONDAY_API_TOKEN!,
-      'API-Version': API_VERSION
+      'Authorization': process.env.MONDAY_API_TOKEN!
     },
     body: JSON.stringify({ query, variables })
   });
